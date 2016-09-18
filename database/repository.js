@@ -49,21 +49,34 @@ var Repository = (function () {
         return this.firebaseDb.ref().update(updates);
     };
     Repository.prototype.rankUpPost = function (postKey) {
-        var promise = this.firebaseDb.ref().child('posts').child(postKey).once('value');
-        promise.then(function (snapshot) {
-            // The Promise was "fulfilled" (it succeeded).
-            var postData = snapshot.val();
-            postData.rating = postData.rating + 1;
-            var updates = {};
-            updates['/posts/' + postKey] = postData;
-            updates['/user-posts/' + postData.username + '/' + postKey] = postData;
-            // return this.firebaseDb.ref().update(updates);
-        }, function (error) {
-            // The Promise was rejected.
-            console.log(error);
+        var promise = this.firebaseDb.ref().child('posts').child(postKey).child('rating');
+        promise.transaction(function (rating) {
+            return rating + 1;
         });
     };
     Repository.prototype.rankDownPost = function (postKey) {
+        this.firebaseDb.ref().child('posts').child(postKey)
+            .once('value', function (snapshot) {
+            var postData = snapshot.val();
+            postData.rating = postData.rating - 1;
+            var updates = {};
+            updates['/posts/' + postKey] = postData;
+            console.log("fuck");
+            updates['/user-posts/' + postData.username + '/' + postKey] = postData;
+        }, function (error) {
+            // The callback failed.
+            console.error(error);
+        });
+        /*
+        ref.child('blogposts').child(id).once('value', function(snapshot) {
+          // The callback succeeded; do something with the final result.
+          renderBlog(snapshot.val());
+        }, function(error) {
+          // The callback failed.
+          console.error(error);
+        });
+        
+        */
     };
     Repository.prototype.getPost = function (postKey) {
         return this.firebaseDb.ref().child('posts').child(postKey).once('value');
