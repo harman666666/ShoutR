@@ -30,6 +30,7 @@ Creates a new message taking this type of JSON:
 "longitude": "60"
 }
 
+
 POST: https://shout-r.herokuapp.com/users/create
 Creates a new users taking this type of JSON:
 
@@ -38,6 +39,7 @@ Creates a new users taking this type of JSON:
 "firstName": "hello world",
 "lastName": "500",
 }
+
 
 POST: https://shout-r.herokuapp.com/posts/rankup/{post-id}
 Increases the rating of the post with specified post-id by 1
